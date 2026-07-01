@@ -20,6 +20,71 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Firebase Admin Editing
+
+The homepage can be edited at `/admin/homepage`, commands at
+`/admin/commands`, tools and Guide Assistant settings at `/admin/tools`, the
+Port Forward Wizard at `/admin/port-forward-wizard`, and guides at
+`/admin/guides`.
+
+Create a Firebase Web App, enable Firestore, and enable Email/Password sign-in
+in Firebase Authentication. Add these values to `.env.local`, then restart the
+Next.js server:
+
+```bash
+NEXT_PUBLIC_FIREBASE_API_KEY=your-api-key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
+NEXT_PUBLIC_FIREBASE_APP_ID=your-web-app-id
+```
+
+Use Firestore rules like this, replacing the email with your Firebase Auth
+admin user:
+
+```txt
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /networkHubContent/homepage {
+      allow read: if true;
+      allow write: if request.auth != null
+        && request.auth.token.email == "you@example.com";
+    }
+
+    match /networkHubContent/commands {
+      allow read: if true;
+      allow write: if request.auth != null
+        && request.auth.token.email == "you@example.com";
+    }
+
+    match /networkHubContent/tools {
+      allow read: if true;
+      allow write: if request.auth != null
+        && request.auth.token.email == "you@example.com";
+    }
+
+    match /networkHubContent/portForwardWizard {
+      allow read: if true;
+      allow write: if request.auth != null
+        && request.auth.token.email == "you@example.com";
+    }
+
+    match /networkHubContent/guides {
+      allow read: if true;
+      allow write: if request.auth != null
+        && request.auth.token.email == "you@example.com";
+    }
+  }
+}
+```
+
+After signing in on the admin page, save once to create the Firestore document.
+The public homepage at `/`, command library at `/commands`, public wizard at
+`/tools/port-forward-wizard`, tools directory at `/tools`, and public guides at
+`/guides` fall back to the built-in starter content until Firebase is configured
+and the documents exist.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
