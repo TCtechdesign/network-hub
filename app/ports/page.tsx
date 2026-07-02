@@ -210,7 +210,7 @@ export default function PortsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#020817] text-white">
+    <main className="min-h-screen overflow-x-hidden bg-[#020817] text-white">
       <SiteNav active="ports" />
 
       <div className="mx-auto grid max-w-[96rem] gap-8 px-4 py-6 sm:px-6 lg:grid-cols-[19rem_minmax(0,1fr)] lg:px-8">
@@ -264,7 +264,7 @@ export default function PortsPage() {
         <section className="min-w-0">
           <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
             <div>
-              <h1 className="text-4xl font-bold leading-tight sm:text-5xl">
+              <h1 className="text-3xl font-bold leading-tight sm:text-5xl">
                 Common Network Ports
               </h1>
               <p className="mt-4 max-w-3xl text-lg text-slate-300">
@@ -284,7 +284,7 @@ export default function PortsPage() {
           </div>
 
           <div className="mt-8 lg:hidden">
-            <div className="flex gap-2 overflow-x-auto pb-2">
+            <div className="flex flex-wrap gap-2">
               {categories.map((category) => {
                 const isActive = selectedCategory === category.name;
 
@@ -293,13 +293,13 @@ export default function PortsPage() {
                     key={category.name}
                     type="button"
                     onClick={() => setSelectedCategory(category.name)}
-                    className={`shrink-0 rounded-full border px-4 py-2 text-sm transition ${
+                    className={`max-w-full rounded-full border px-4 py-2 text-sm transition ${
                       isActive
                         ? "border-cyan-500 bg-cyan-500/15 text-cyan-300"
                         : "border-slate-800 text-slate-300"
                     }`}
                   >
-                    {category.name}
+                    <span className="break-words">{category.name}</span>
                   </button>
                 );
               })}
@@ -372,95 +372,217 @@ export default function PortsPage() {
             </label>
           </div>
 
-          <div className="mt-8 overflow-hidden rounded-lg border border-slate-800 bg-slate-950/55">
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[58rem] border-collapse text-left">
-                <thead>
-                  <tr className="border-b border-slate-800 text-xs uppercase tracking-wide text-cyan-300">
-                    <th className="px-5 py-4 font-semibold">Port</th>
-                    <th className="px-5 py-4 font-semibold">Protocol</th>
-                    <th className="px-5 py-4 font-semibold">Service</th>
-                    <th className="px-5 py-4 font-semibold">Description</th>
-                    <th className="px-5 py-4 font-semibold">Category</th>
-                    <th className="px-4 py-4">
-                      <span className="sr-only">Details</span>
-                    </th>
-                  </tr>
-                </thead>
+          <div className="mt-8">
+            {filteredPorts.length > 0 ? (
+              <>
+                <div className="grid gap-3 md:hidden">
+                  {filteredPorts.map((port) => (
+                    <PortMobileCard
+                      key={`${port.port}-${port.protocol}-${port.service}-mobile`}
+                      onOpen={() => openPort(port)}
+                      port={port}
+                    />
+                  ))}
+                </div>
 
-                <tbody className="divide-y divide-slate-800">
-                  {filteredPorts.map((port) => {
-                    const CategoryIcon = getCategoryIcon(port.category);
+                <div className="hidden overflow-hidden rounded-lg border border-slate-800 bg-slate-950/55 md:block">
+                  <div className="overflow-x-auto">
+                    <table className="w-full min-w-[58rem] border-collapse text-left">
+                      <thead>
+                        <tr className="border-b border-slate-800 text-xs uppercase tracking-wide text-cyan-300">
+                          <th className="px-5 py-4 font-semibold">Port</th>
+                          <th className="px-5 py-4 font-semibold">Protocol</th>
+                          <th className="px-5 py-4 font-semibold">Service</th>
+                          <th className="px-5 py-4 font-semibold">
+                            Description
+                          </th>
+                          <th className="px-5 py-4 font-semibold">Category</th>
+                          <th className="px-4 py-4">
+                            <span className="sr-only">Details</span>
+                          </th>
+                        </tr>
+                      </thead>
 
-                    return (
-                      <tr
-                        key={`${port.port}-${port.protocol}-${port.service}`}
-                        role="link"
-                        tabIndex={0}
-                        aria-label={`View details for port ${port.port} ${port.service}`}
-                        onClick={() => openPort(port)}
-                        onKeyDown={(event) => {
-                          if (event.key === "Enter" || event.key === " ") {
-                            event.preventDefault();
-                            openPort(port);
-                          }
-                        }}
-                        className="group cursor-pointer transition hover:bg-slate-900/70 focus:bg-slate-900/70 focus:outline-none"
-                      >
-                        <td className="px-5 py-4 text-lg font-semibold text-cyan-300">
-                          {port.port}
-                        </td>
-                        <td className="px-5 py-4">
-                          <span
-                            className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${getProtocolBadgeClass(
-                              port.protocol
-                            )}`}
-                          >
-                            {port.protocol}
-                          </span>
-                        </td>
-                        <td className="px-5 py-4 font-semibold text-white">
-                          {port.service}
-                        </td>
-                        <td className="max-w-[22rem] px-5 py-4 text-sm leading-6 text-slate-300">
-                          {port.description}
-                        </td>
-                        <td className="px-5 py-4">
-                          <span
-                            className={`inline-flex items-center gap-2 text-sm ${getCategoryTextClass(
-                              port.category
-                            )}`}
-                          >
-                            <CategoryIcon size={17} />
-                            {port.category}
-                          </span>
-                        </td>
-                        <td className="px-4 py-4 text-right text-slate-500">
-                          <ChevronRight
-                            className="transition group-hover:translate-x-1 group-hover:text-cyan-300"
-                            size={18}
-                          />
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+                      <tbody className="divide-y divide-slate-800">
+                        {filteredPorts.map((port) => {
+                          const CategoryIcon = getCategoryIcon(port.category);
 
-            {filteredPorts.length === 0 && (
-              <div className="border-t border-slate-800 px-5 py-12 text-center">
-                <p className="text-lg font-semibold text-slate-200">
-                  No ports found
-                </p>
-                <p className="mt-2 text-sm text-slate-400">
-                  Try a different search, protocol, or category.
-                </p>
-              </div>
+                          return (
+                            <tr
+                              key={`${port.port}-${port.protocol}-${port.service}`}
+                              role="link"
+                              tabIndex={0}
+                              aria-label={`View details for port ${port.port} ${port.service}`}
+                              onClick={() => openPort(port)}
+                              onKeyDown={(event) => {
+                                if (event.key === "Enter" || event.key === " ") {
+                                  event.preventDefault();
+                                  openPort(port);
+                                }
+                              }}
+                              className="group cursor-pointer transition hover:bg-slate-900/70 focus:bg-slate-900/70 focus:outline-none"
+                            >
+                              <td className="px-5 py-4 text-lg font-semibold text-cyan-300">
+                                {port.port}
+                              </td>
+                              <td className="px-5 py-4">
+                                <span
+                                  className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${getProtocolBadgeClass(
+                                    port.protocol
+                                  )}`}
+                                >
+                                  {port.protocol}
+                                </span>
+                              </td>
+                              <td className="px-5 py-4 font-semibold text-white">
+                                {port.service}
+                              </td>
+                              <td className="max-w-[22rem] px-5 py-4 text-sm leading-6 text-slate-300">
+                                {port.description}
+                              </td>
+                              <td className="px-5 py-4">
+                                <span
+                                  className={`inline-flex items-center gap-2 text-sm ${getCategoryTextClass(
+                                    port.category
+                                  )}`}
+                                >
+                                  <CategoryIcon size={17} />
+                                  {port.category}
+                                </span>
+                              </td>
+                              <td className="px-4 py-4 text-right text-slate-500">
+                                <ChevronRight
+                                  className="transition group-hover:translate-x-1 group-hover:text-cyan-300"
+                                  size={18}
+                                />
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <NoPortsFound />
             )}
           </div>
         </section>
       </div>
     </main>
+  );
+}
+
+function PortMobileCard({
+  onOpen,
+  port,
+}: {
+  onOpen: () => void;
+  port: PortReference;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onOpen}
+      className="group w-full rounded-lg border border-slate-800 bg-slate-950/65 p-4 text-left transition hover:border-cyan-500/60 hover:bg-slate-900/70 focus:border-cyan-500 focus:outline-none"
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-xs font-semibold uppercase text-slate-500">
+            Port
+          </p>
+          <p className="mt-1 break-words text-2xl font-bold text-cyan-300">
+            {port.port}
+          </p>
+        </div>
+
+        <span
+          className={`shrink-0 rounded-full border px-3 py-1 text-xs font-semibold ${getProtocolBadgeClass(
+            port.protocol
+          )}`}
+        >
+          {port.protocol}
+        </span>
+      </div>
+
+      <h2 className="mt-4 break-words text-lg font-semibold text-white">
+        {port.service}
+      </h2>
+
+      <p className="mt-2 line-clamp-3 text-sm leading-6 text-slate-300">
+        {port.description}
+      </p>
+
+      <div className="mt-4 flex items-center justify-between gap-3 border-t border-slate-800 pt-4">
+        <span
+          className={`flex min-w-0 items-center gap-2 text-sm ${getCategoryTextClass(
+            port.category
+          )}`}
+        >
+          <PortCategoryIcon
+            categoryName={port.category}
+            className="shrink-0"
+            size={17}
+          />
+          <span className="break-words">{port.category}</span>
+        </span>
+        <ChevronRight
+          className="shrink-0 text-slate-500 transition group-hover:translate-x-1 group-hover:text-cyan-300"
+          size={18}
+        />
+      </div>
+    </button>
+  );
+}
+
+function PortCategoryIcon({
+  categoryName,
+  className,
+  size,
+}: {
+  categoryName: string;
+  className?: string;
+  size: number;
+}) {
+  if (categoryName === allPortsLabel) {
+    return <Server className={className} size={size} />;
+  }
+
+  if (categoryName === commonPortsLabel || categoryName === "Web Services") {
+    return <Globe2 className={className} size={size} />;
+  }
+
+  if (categoryName === "Email") {
+    return <Mail className={className} size={size} />;
+  }
+
+  if (categoryName === "File Transfer") {
+    return <Folder className={className} size={size} />;
+  }
+
+  if (categoryName === "Remote Access" || categoryName === "Security") {
+    return <Shield className={className} size={size} />;
+  }
+
+  if (categoryName === "Network Services") {
+    return <Network className={className} size={size} />;
+  }
+
+  if (categoryName === "Gaming") {
+    return <Gamepad2 className={className} size={size} />;
+  }
+
+  return <FileText className={className} size={size} />;
+}
+
+function NoPortsFound() {
+  return (
+    <div className="rounded-lg border border-slate-800 bg-slate-950/55 px-5 py-12 text-center">
+      <p className="text-lg font-semibold text-slate-200">No ports found</p>
+      <p className="mt-2 text-sm text-slate-400">
+        Try a different search, protocol, or category.
+      </p>
+    </div>
   );
 }

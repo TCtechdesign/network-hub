@@ -61,7 +61,7 @@ export default async function PortDetailPage({
   const relatedPorts = getRelatedPorts(port);
 
   return (
-    <main className="min-h-screen bg-[#020817] text-white">
+    <main className="min-h-screen overflow-x-hidden bg-[#020817] text-white">
       <SiteNav active="ports" />
 
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
@@ -87,13 +87,13 @@ export default async function PortDetailPage({
 
         <section className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,1fr)_21rem]">
           <article className="min-w-0">
-            <div className="rounded-lg border border-slate-800 bg-slate-950/65 p-6 sm:p-8">
+            <div className="rounded-lg border border-slate-800 bg-slate-950/65 p-4 sm:p-6 lg:p-8">
               <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
-                <div>
+                <div className="min-w-0">
                   <p className="text-sm font-semibold uppercase text-cyan-300">
                     Port {port.port}
                   </p>
-                  <h1 className="mt-3 text-4xl font-bold leading-tight sm:text-5xl">
+                  <h1 className="mt-3 break-words text-3xl font-bold leading-tight sm:text-5xl">
                     {port.service}
                   </h1>
                   <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-300">
@@ -102,7 +102,7 @@ export default async function PortDetailPage({
                 </div>
 
                 <span
-                  className={`inline-flex w-fit rounded-full border px-4 py-2 text-sm font-semibold ${getProtocolBadgeClass(
+                  className={`inline-flex max-w-full w-fit rounded-full border px-4 py-2 text-sm font-semibold ${getProtocolBadgeClass(
                     port.protocol
                   )}`}
                 >
@@ -115,7 +115,7 @@ export default async function PortDetailPage({
                   <p className="text-xs font-semibold uppercase text-slate-500">
                     Port
                   </p>
-                  <p className="mt-2 text-2xl font-bold text-cyan-300">
+                  <p className="mt-2 break-words text-2xl font-bold text-cyan-300">
                     {port.port}
                   </p>
                 </div>
@@ -123,7 +123,7 @@ export default async function PortDetailPage({
                   <p className="text-xs font-semibold uppercase text-slate-500">
                     Protocol
                   </p>
-                  <p className="mt-2 text-2xl font-bold text-white">
+                  <p className="mt-2 break-words text-2xl font-bold text-white">
                     {port.protocol}
                   </p>
                 </div>
@@ -131,7 +131,7 @@ export default async function PortDetailPage({
                   <p className="text-xs font-semibold uppercase text-slate-500">
                     Category
                   </p>
-                  <p className="mt-2 text-lg font-semibold text-slate-100">
+                  <p className="mt-2 break-words text-lg font-semibold text-slate-100">
                     {port.category}
                   </p>
                 </div>
@@ -139,7 +139,7 @@ export default async function PortDetailPage({
             </div>
 
             <div className="mt-8 space-y-6">
-              <section className="rounded-lg border border-slate-800 bg-slate-950/65 p-6">
+              <section className="rounded-lg border border-slate-800 bg-slate-950/65 p-4 sm:p-6">
                 <div className="flex items-center gap-3">
                   <Server className="text-cyan-300" size={22} />
                   <h2 className="text-xl font-semibold">Purpose</h2>
@@ -147,7 +147,7 @@ export default async function PortDetailPage({
                 <p className="mt-4 leading-7 text-slate-300">{port.purpose}</p>
               </section>
 
-              <section className="rounded-lg border border-slate-800 bg-slate-950/65 p-6">
+              <section className="rounded-lg border border-slate-800 bg-slate-950/65 p-4 sm:p-6">
                 <div className="flex items-center gap-3">
                   <Network className="text-cyan-300" size={22} />
                   <h2 className="text-xl font-semibold">Common Uses</h2>
@@ -162,7 +162,7 @@ export default async function PortDetailPage({
                 </div>
               </section>
 
-              <section className="rounded-lg border border-slate-800 bg-slate-950/65 p-6">
+              <section className="rounded-lg border border-slate-800 bg-slate-950/65 p-4 sm:p-6">
                 <div className="flex items-center gap-3">
                   <Shield className="text-cyan-300" size={22} />
                   <h2 className="text-xl font-semibold">Common Symptoms</h2>
@@ -177,7 +177,7 @@ export default async function PortDetailPage({
                 </div>
               </section>
 
-              <section className="rounded-lg border border-slate-800 bg-slate-950/65 p-6">
+              <section className="rounded-lg border border-slate-800 bg-slate-950/65 p-4 sm:p-6">
                 <div className="flex items-center gap-3">
                   <CheckCircle2 className="text-cyan-300" size={22} />
                   <h2 className="text-xl font-semibold">Troubleshooting</h2>
@@ -197,7 +197,7 @@ export default async function PortDetailPage({
             </div>
           </article>
 
-          <aside className="space-y-5">
+          <aside className="min-w-0 space-y-5">
             <div className="rounded-lg border border-slate-800 bg-slate-950/65 p-5">
               <div className="flex items-center gap-3">
                 <Terminal className="text-cyan-300" size={22} />
@@ -209,7 +209,7 @@ export default async function PortDetailPage({
                 {port.relatedCommands.map((command) => (
                   <div
                     key={command}
-                    className="rounded-lg border border-slate-800 bg-slate-900/60 px-4 py-3 font-mono text-sm text-green-400"
+                    className="break-words rounded-lg border border-slate-800 bg-slate-900/60 px-4 py-3 font-mono text-sm leading-6 text-green-400"
                   >
                     {command}
                   </div>
@@ -227,9 +227,9 @@ export default async function PortDetailPage({
                     <Link
                       key={getPortSlug(item)}
                       href={`/ports/${getPortSlug(item)}`}
-                      className="flex items-center justify-between gap-4 py-3 text-sm text-blue-300 transition hover:text-cyan-300"
+                      className="flex min-w-0 items-center justify-between gap-4 py-3 text-sm text-blue-300 transition hover:text-cyan-300"
                     >
-                      <span>
+                      <span className="min-w-0 break-words">
                         <span className="font-semibold text-cyan-300">
                           {item.port}
                         </span>{" "}

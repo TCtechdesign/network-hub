@@ -150,6 +150,30 @@ export async function writeFirestoreDocument(
   }
 }
 
+export async function createFirestoreDocument(
+  collectionPath: string,
+  data: Record<string, unknown>,
+  idToken?: string
+) {
+  const config = getFirebasePublicConfig();
+
+  if (!config.configured) {
+    throw new Error("Firebase is missing NEXT_PUBLIC_FIREBASE_API_KEY or NEXT_PUBLIC_FIREBASE_PROJECT_ID.");
+  }
+
+  const response = await fetch(buildFirestoreCollectionUrl(config, collectionPath), {
+    method: "POST",
+    headers: createFirestoreHeaders(idToken),
+    body: JSON.stringify({
+      fields: jsonToFirestoreFields(data),
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(await readFirebaseError(response));
+  }
+}
+
 function createFirestoreHeaders(idToken?: string) {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
@@ -167,6 +191,22 @@ function buildFirestoreDocumentUrl(
   documentPath: string
 ) {
   const encodedPath = documentPath.split("/").map(encodeURIComponent).join("/");
+  const url = new URL(
+    `https://firestore.googleapis.com/v1/projects/${encodeURIComponent(
+      config.projectId
+    )}/databases/(default)/documents/${encodedPath}`
+  );
+
+  url.searchParams.set("key", config.apiKey);
+
+  return url.toString();
+}
+
+function buildFirestoreCollectionUrl(
+  config: FirebasePublicConfig,
+  collectionPath: string
+) {
+  const encodedPath = collectionPath.split("/").map(encodeURIComponent).join("/");
   const url = new URL(
     `https://firestore.googleapis.com/v1/projects/${encodeURIComponent(
       config.projectId

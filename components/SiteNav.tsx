@@ -5,7 +5,13 @@ import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { type MouseEvent, useState } from "react";
 
-type NavSection = "home" | "commands" | "guides" | "tools" | "ports";
+type NavSection =
+  | "home"
+  | "commands"
+  | "guides"
+  | "tools"
+  | "ports"
+  | "security";
 
 type SiteNavProps = {
   active?: NavSection;
@@ -17,6 +23,7 @@ const navItems: { label: string; href: string; section: NavSection }[] = [
   { label: "Guides", href: "/guides", section: "guides" },
   { label: "Tools", href: "/tools", section: "tools" },
   { label: "Ports", href: "/ports", section: "ports" },
+  { label: "Security", href: "/security-alerts", section: "security" },
 ];
 
 function desktopLinkClass(isActive: boolean) {

@@ -9,11 +9,10 @@ import {
   Info,
   Network,
   Search,
-  ThumbsDown,
-  ThumbsUp,
 } from "lucide-react";
 import GuideAssistant from "@/components/GuideAssistant";
 import GuideChecklistItem from "@/components/GuideChecklistItem";
+import GuideFeedback from "@/components/GuideFeedback";
 import SiteNav from "@/components/SiteNav";
 import { getGuideCategories } from "@/data/guideCategories";
 import { guides as defaultGuides, type Guide } from "@/data/guides";
@@ -557,6 +556,8 @@ export default async function GuidePage({
               </section>
             ))}
           </div>
+
+          <GuideFeedback guideSlug={guide.slug} className="mt-10 xl:hidden" />
         </article>
 
         <aside className="hidden xl:block">
@@ -599,20 +600,7 @@ export default async function GuidePage({
               </div>
             </div>
 
-            <div className="rounded-lg border border-slate-800 bg-slate-900/45 p-5">
-              <h2 className="text-slate-300">Was this guide helpful?</h2>
-              <div className="mt-4 flex gap-3">
-                <button className="rounded-lg border border-slate-800 bg-slate-950/70 p-3 text-slate-300 hover:border-cyan-500 hover:text-cyan-400">
-                  <ThumbsUp size={20} />
-                </button>
-                <button className="rounded-lg border border-slate-800 bg-slate-950/70 p-3 text-slate-300 hover:border-cyan-500 hover:text-cyan-400">
-                  <ThumbsDown size={20} />
-                </button>
-              </div>
-              <p className="mt-4 text-sm text-slate-400">
-                Your feedback helps us improve.
-              </p>
-            </div>
+            <GuideFeedback guideSlug={guide.slug} />
           </div>
         </aside>
       </div>
