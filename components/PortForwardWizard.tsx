@@ -165,7 +165,7 @@ export default function PortForwardWizard({ content }: PortForwardWizardProps) {
   }
 
   return (
-    <main className="min-h-screen bg-[#020817] text-white">
+    <main className="min-h-screen overflow-x-hidden bg-[#020817] text-white">
       <SiteNav active="tools" />
 
       <div className="mx-auto grid max-w-[96rem] gap-8 px-4 py-6 sm:px-6 lg:grid-cols-[18rem_minmax(0,1fr)] lg:px-8">
@@ -193,7 +193,7 @@ export default function PortForwardWizard({ content }: PortForwardWizardProps) {
             </p>
           </header>
 
-          <section className="mt-6 rounded-lg border border-slate-800 bg-slate-950/65 p-5 shadow-[0_0_70px_rgba(14,165,233,0.06)]">
+          <section className="mt-6 rounded-lg border border-slate-800 bg-slate-950/65 p-4 shadow-[0_0_70px_rgba(14,165,233,0.06)] sm:p-5">
             <div className="grid gap-6 xl:grid-cols-[minmax(18rem,0.85fr)_minmax(0,1.7fr)]">
               <div>
                 <label
@@ -260,7 +260,7 @@ export default function PortForwardWizard({ content }: PortForwardWizardProps) {
                         key={device.id}
                         type="button"
                         onClick={() => selectDevice(device.id)}
-                        className={`flex h-14 items-center gap-3 rounded-lg border px-4 text-left transition ${
+                        className={`flex min-h-14 min-w-0 items-center gap-3 rounded-lg border px-4 py-3 text-left transition ${
                           isActive
                             ? "border-cyan-500/70 bg-cyan-500/10 text-cyan-100"
                             : "border-slate-800 bg-slate-950/65 text-slate-200 hover:border-cyan-500/50 hover:bg-cyan-500/5"
@@ -423,9 +423,54 @@ function RulesTable({
   rules: RenderedRule[];
 }) {
   return (
-    <section className="rounded-lg border border-slate-800 bg-slate-950/65 p-5">
+    <section className="rounded-lg border border-slate-800 bg-slate-950/65 p-4 sm:p-5">
       <h2 className="font-semibold">2. Recommended Port Forwarding Rules</h2>
-      <div className="mt-4 overflow-x-auto">
+
+      <div className="mt-4 space-y-3 md:hidden">
+        {rules.map((rule) => (
+          <article
+            key={`${rule.protocol}-${rule.port}-${rule.description}-mobile`}
+            className="rounded-lg border border-slate-800 bg-slate-950/75 p-4"
+          >
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <ProtocolBadge protocol={rule.protocol} />
+              <span className="inline-flex items-center gap-2 rounded-md bg-emerald-500/15 px-2 py-1 text-xs font-semibold text-emerald-300">
+                Recommended
+                <CheckCircle2 size={14} />
+              </span>
+            </div>
+
+            <dl className="mt-4 space-y-3 text-sm">
+              <div>
+                <dt className="text-xs font-semibold uppercase text-slate-500">
+                  Port / Range
+                </dt>
+                <dd className="mt-1 break-words font-semibold text-slate-100">
+                  {rule.port}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-xs font-semibold uppercase text-slate-500">
+                  Local IP
+                </dt>
+                <dd className="mt-1 break-all text-slate-200">
+                  {rule.localIp}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-xs font-semibold uppercase text-slate-500">
+                  Description
+                </dt>
+                <dd className="mt-1 leading-6 text-slate-300">
+                  {rule.description}
+                </dd>
+              </div>
+            </dl>
+          </article>
+        ))}
+      </div>
+
+      <div className="mt-4 hidden overflow-x-auto md:block">
         <table className="w-full min-w-[44rem] text-left text-sm">
           <thead>
             <tr className="border-b border-slate-800 text-slate-300">
@@ -507,17 +552,17 @@ function SelectedDeviceCard({
         >
           <Icon size={34} />
         </span>
-        <div>
-          <p className="text-xl font-bold">{device.name}</p>
-          <p className="mt-1 text-slate-400">{device.type}</p>
+        <div className="min-w-0">
+          <p className="break-words text-xl font-bold">{device.name}</p>
+          <p className="mt-1 break-words text-slate-400">{device.type}</p>
         </div>
       </div>
-      <div className="mt-5 flex items-center justify-between border-t border-slate-800 pt-5 text-sm">
+      <div className="mt-5 flex flex-col gap-2 border-t border-slate-800 pt-5 text-sm sm:flex-row sm:items-center sm:justify-between">
         <span className="flex items-center gap-2 text-slate-400">
           <Network size={17} />
           Local IP Address
         </span>
-        <span className="font-semibold text-slate-100">{localIp}</span>
+        <span className="break-all font-semibold text-slate-100">{localIp}</span>
       </div>
     </section>
   );
@@ -555,7 +600,7 @@ function SafetyNotice({ message }: { message: string }) {
 
 function BlankWizardState({ title, body }: { title: string; body: string }) {
   return (
-    <section className="mt-5 rounded-lg border border-slate-800 bg-slate-950/45 px-6 py-16 text-center shadow-[0_0_60px_rgba(14,165,233,0.04)]">
+    <section className="mt-5 rounded-lg border border-slate-800 bg-slate-950/45 px-4 py-16 text-center shadow-[0_0_60px_rgba(14,165,233,0.04)] sm:px-6">
       <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-slate-700 bg-slate-950 text-slate-400">
         <Wifi size={32} />
       </div>
