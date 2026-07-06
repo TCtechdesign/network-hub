@@ -15,7 +15,11 @@ import {
 import { useMemo, useState } from "react";
 import CopyCommandButton from "@/components/CopyCommandButton";
 import SiteNav from "@/components/SiteNav";
-import type { CommandReference } from "@/data/commands";
+import {
+  commandDifficultyOptions,
+  type CommandDifficulty,
+  type CommandReference,
+} from "@/data/commands";
 
 type CategoryItem = {
   name: string;
@@ -28,6 +32,7 @@ const allCommandsLabel = "All Commands";
 const crossPlatformLabel = "Cross-Platform";
 const allPlatformsLabel = "All Platforms";
 const allCategoriesLabel = "All Categories";
+const allDifficultiesLabel = "All Levels";
 
 const categoryOrder = [
   "Connectivity",
@@ -59,6 +64,9 @@ export default function CommandsIndex({
   const [search, setSearch] = useState("");
   const [selectedPlatform, setSelectedPlatform] = useState(allPlatformsLabel);
   const [selectedCategory, setSelectedCategory] = useState(allCommandsLabel);
+  const [selectedDifficulty, setSelectedDifficulty] = useState(
+    allDifficultiesLabel
+  );
   const categories = useMemo(() => getCommandCategories(commands), [commands]);
   const platformOptions = useMemo(
     () => [
@@ -78,6 +86,7 @@ export default function CommandsIndex({
       command.name,
       command.description,
       command.category,
+      command.difficulty,
       command.explanation,
       ...command.platforms,
     ]
@@ -87,7 +96,8 @@ export default function CommandsIndex({
     return (
       searchableText.includes(searchText) &&
       commandMatchesPlatform(command, selectedPlatform) &&
-      commandMatchesCategory(command, selectedCategory)
+      commandMatchesCategory(command, selectedCategory) &&
+      commandMatchesDifficulty(command, selectedDifficulty)
     );
   });
 
@@ -177,7 +187,7 @@ export default function CommandsIndex({
             </div>
           </div>
 
-          <div className="mt-8 grid gap-4 xl:grid-cols-[minmax(0,1fr)_13rem_13rem]">
+          <div className="mt-8 grid gap-4 xl:grid-cols-[minmax(0,1fr)_12rem_13rem_13rem]">
             <label className="relative block">
               <span className="sr-only">Search commands</span>
               <input
@@ -194,8 +204,28 @@ export default function CommandsIndex({
             </label>
 
             <label className="relative block">
+              <span className="sr-only">Filter by difficulty</span>
+              <select
+                aria-label="Filter by difficulty"
+                value={selectedDifficulty}
+                onChange={(event) => setSelectedDifficulty(event.target.value)}
+                className="h-12 w-full appearance-none rounded-lg border border-slate-800 bg-slate-950/70 px-4 pr-10 text-sm text-slate-200 outline-none transition focus:border-cyan-500"
+              >
+                <option>{allDifficultiesLabel}</option>
+                {commandDifficultyOptions.map((difficulty) => (
+                  <option key={difficulty}>{difficulty}</option>
+                ))}
+              </select>
+              <Filter
+                className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-500"
+                size={17}
+              />
+            </label>
+
+            <label className="relative block">
               <span className="sr-only">Filter by platform</span>
               <select
+                aria-label="Filter by platform"
                 value={selectedPlatform}
                 onChange={(event) => setSelectedPlatform(event.target.value)}
                 className="h-12 w-full appearance-none rounded-lg border border-slate-800 bg-slate-950/70 px-4 pr-10 text-sm text-slate-200 outline-none transition focus:border-cyan-500"
@@ -213,6 +243,7 @@ export default function CommandsIndex({
             <label className="relative block">
               <span className="sr-only">Filter by category</span>
               <select
+                aria-label="Filter by category"
                 value={
                   selectedCategory === crossPlatformLabel
                     ? allCategoriesLabel
@@ -252,19 +283,22 @@ export default function CommandsIndex({
                   key={command.slug}
                   className="rounded-lg border border-slate-800 bg-slate-950/65 p-5 transition hover:-translate-y-1 hover:border-cyan-500/70 hover:shadow-[0_0_38px_rgba(6,182,212,0.12)]"
                 >
-                  <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="flex flex-col items-start gap-3">
                     <code className="max-w-full break-words rounded-md bg-cyan-500/10 px-3 py-1.5 font-mono text-base font-semibold leading-7 text-cyan-300 sm:text-lg">
                       {command.name}
                     </code>
 
-                    <span
-                      className={`inline-flex shrink-0 items-center gap-2 text-xs ${getCategoryTextClass(
-                        command.category
-                      )}`}
-                    >
-                      <CategoryIcon size={16} />
-                      {command.category}
-                    </span>
+                    <div className="flex flex-wrap items-center gap-3">
+                      <DifficultyBadge difficulty={command.difficulty} />
+                      <span
+                        className={`inline-flex items-center gap-2 text-xs ${getCategoryTextClass(
+                          command.category
+                        )}`}
+                      >
+                        <CategoryIcon size={16} />
+                        {command.category}
+                      </span>
+                    </div>
                   </div>
 
                   <p className="mt-4 min-h-[3rem] text-sm leading-6 text-slate-300">
@@ -375,6 +409,57 @@ function commandMatchesPlatform(
   return command.platforms.some(
     (platform) => platform.toLowerCase() === selectedPlatform.toLowerCase()
   );
+}
+
+function commandMatchesDifficulty(
+  command: CommandReference,
+  selectedDifficulty: string
+) {
+  if (selectedDifficulty === allDifficultiesLabel) {
+    return true;
+  }
+
+  return command.difficulty === selectedDifficulty;
+}
+
+function DifficultyBadge({ difficulty }: { difficulty: CommandDifficulty }) {
+  return (
+    <span
+      className={`inline-flex items-center gap-2 text-xs font-semibold ${getDifficultyTextClass(
+        difficulty
+      )}`}
+    >
+      <span
+        className={`h-2 w-2 rounded-full ${getDifficultyDotClass(difficulty)}`}
+        aria-hidden="true"
+      />
+      {difficulty}
+    </span>
+  );
+}
+
+function getDifficultyTextClass(difficulty: CommandDifficulty) {
+  if (difficulty === "Beginner") {
+    return "text-emerald-300";
+  }
+
+  if (difficulty === "Intermediate") {
+    return "text-amber-300";
+  }
+
+  return "text-red-300";
+}
+
+function getDifficultyDotClass(difficulty: CommandDifficulty) {
+  if (difficulty === "Beginner") {
+    return "bg-emerald-400";
+  }
+
+  if (difficulty === "Intermediate") {
+    return "bg-amber-300";
+  }
+
+  return "bg-red-400";
 }
 
 function getCategoryTextClass(categoryName: string) {

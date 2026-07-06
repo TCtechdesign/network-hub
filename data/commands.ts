@@ -1,6 +1,12 @@
 export const commandPlatformOptions = ["Windows", "macOS", "Linux"] as const;
+export const commandDifficultyOptions = [
+  "Beginner",
+  "Intermediate",
+  "Advanced",
+] as const;
 
 export type CommandPlatform = (typeof commandPlatformOptions)[number];
+export type CommandDifficulty = (typeof commandDifficultyOptions)[number];
 
 export type CommandExample = {
   id: string;
@@ -20,6 +26,7 @@ export type CommandReference = {
   name: string;
   description: string;
   category: string;
+  difficulty: CommandDifficulty;
   platforms: CommandPlatform[];
   syntax: string;
   explanation: string;
@@ -41,6 +48,7 @@ export const commands: CommandReference[] = [
     slug: "ping",
     name: "ping",
     description: "Test connectivity to a device or website.",
+    difficulty: "Beginner",
     platforms: ["Windows", "macOS", "Linux"],
     category: "Connectivity",
     syntax: "ping <destination>",
@@ -90,6 +98,7 @@ export const commands: CommandReference[] = [
     slug: "nslookup",
     name: "nslookup",
     description: "Query DNS records and troubleshoot DNS issues.",
+    difficulty: "Beginner",
     platforms: ["Windows", "macOS", "Linux"],
     category: "DNS",
     syntax: "nslookup <domain>",
@@ -138,6 +147,7 @@ export const commands: CommandReference[] = [
     slug: "ipconfig",
     name: "ipconfig",
     description: "Display IP configuration.",
+    difficulty: "Beginner",
     platforms: ["Windows"],
     category: "DHCP",
     syntax: "ipconfig",
@@ -187,6 +197,7 @@ export const commands: CommandReference[] = [
     slug: "ifconfig",
     name: "ifconfig",
     description: "Display network interface details.",
+    difficulty: "Beginner",
     platforms: ["macOS", "Linux"],
     category: "DHCP",
     syntax: "ifconfig",
@@ -230,6 +241,7 @@ export const commands: CommandReference[] = [
     slug: "tracert",
     name: "tracert",
     description: "Trace packet path on Windows.",
+    difficulty: "Intermediate",
     platforms: ["Windows"],
     category: "Routing",
     syntax: "tracert <destination>",
@@ -272,6 +284,7 @@ export const commands: CommandReference[] = [
     slug: "traceroute",
     name: "traceroute",
     description: "Trace packet path on macOS and Linux.",
+    difficulty: "Intermediate",
     platforms: ["macOS", "Linux"],
     category: "Routing",
     syntax: "traceroute <destination>",
@@ -309,6 +322,7 @@ export const commands: CommandReference[] = [
     slug: "arp",
     name: "arp -a",
     description: "View the ARP table.",
+    difficulty: "Intermediate",
     platforms: ["Windows", "macOS", "Linux"],
     category: "Layer 2",
     syntax: "arp -a",
@@ -352,6 +366,7 @@ export const commands: CommandReference[] = [
     slug: "netstat",
     name: "netstat",
     description: "Display active network connections.",
+    difficulty: "Intermediate",
     platforms: ["Windows", "macOS", "Linux"],
     category: "Connections",
     syntax: "netstat",
@@ -390,6 +405,7 @@ export const commands: CommandReference[] = [
     slug: "netstatan",
     name: "netstat -an",
     description: "Display all active network connections with numeric addresses.",
+    difficulty: "Intermediate",
     platforms: ["Windows", "macOS", "Linux"],
     category: "Connections",
     syntax: "netstat -an",
@@ -433,6 +449,7 @@ export const commands: CommandReference[] = [
     slug: "netstatr",
     name: "netstat -r",
     description: "Display the routing table.",
+    difficulty: "Advanced",
     platforms: ["Windows", "macOS", "Linux"],
     category: "Routing",
     syntax: "netstat -r",
@@ -469,6 +486,7 @@ export const commands: CommandReference[] = [
     slug: "netstatb",
     name: "netstat -b",
     description: "Display the executable responsible for each connection.",
+    difficulty: "Advanced",
     platforms: ["Windows"],
     category: "Connections",
     syntax: "netstat -b",
@@ -508,6 +526,7 @@ export const commands: CommandReference[] = [
     name: "ipconfig /all",
     description:
       "Display detailed information about all network interfaces.",
+    difficulty: "Beginner",
     platforms: ["Windows"],
     category: "DHCP",
     syntax: "ipconfig /all",
@@ -546,6 +565,7 @@ export const commands: CommandReference[] = [
     slug: "ipconfigrenew",
     name: "ipconfig /renew",
     description: "Request a new IP address from the DHCP server.",
+    difficulty: "Intermediate",
     platforms: ["Windows"],
     category: "DHCP",
     syntax: "ipconfig /renew",
@@ -577,6 +597,7 @@ export const commands: CommandReference[] = [
     slug: "ipconfigrelease",
     name: "ipconfig /release",
     description: "Release the current DHCP IP address.",
+    difficulty: "Advanced",
     platforms: ["Windows"],
     category: "DHCP",
     syntax: "ipconfig /release",
@@ -608,6 +629,7 @@ export const commands: CommandReference[] = [
     slug: "ipconfigflushdns",
     name: "ipconfig /flushdns",
     description: "Clear the Windows DNS resolver cache.",
+    difficulty: "Intermediate",
     platforms: ["Windows"],
     category: "DNS",
     syntax: "ipconfig /flushdns",
@@ -650,6 +672,7 @@ export const commands: CommandReference[] = [
     slug: "ipconfiggetifaddren0",
     name: "ipconfig getifaddr en0",
     description: "Show the IP address of a macOS interface.",
+    difficulty: "Beginner",
     platforms: ["macOS"],
     category: "DHCP",
     syntax: "ipconfig getifaddr en0",
@@ -687,6 +710,7 @@ export const commands: CommandReference[] = [
     slug: "ipconfiggetpacketen0",
     name: "ipconfig getpacket en0",
     description: "Display macOS DHCP lease information.",
+    difficulty: "Intermediate",
     platforms: ["macOS"],
     category: "DHCP",
     syntax: "ipconfig getpacket en0",
@@ -719,6 +743,7 @@ export const commands: CommandReference[] = [
     slug: "networksetuplistallhardwareports",
     name: "networksetup -listallhardwareports",
     description: "List macOS network adapters and device names.",
+    difficulty: "Intermediate",
     platforms: ["macOS"],
     category: "Connections",
     syntax: "networksetup -listallhardwareports",
@@ -757,6 +782,7 @@ export const commands: CommandReference[] = [
     slug: "scutildns",
     name: "scutil --dns",
     description: "Display macOS DNS configuration.",
+    difficulty: "Intermediate",
     platforms: ["macOS"],
     category: "DNS",
     syntax: "scutil --dns",
@@ -800,6 +826,7 @@ export const commands: CommandReference[] = [
     slug: "sudoflushdns",
     name: "sudo dscacheutil -flushcache",
     description: "Flush the DNS cache on macOS.",
+    difficulty: "Advanced",
     platforms: ["macOS"],
     category: "DNS",
     syntax: "sudo dscacheutil -flushcache",
@@ -837,6 +864,7 @@ export const commands: CommandReference[] = [
     slug: "curlI",
     name: "curl -I",
     description: "Check website response headers.",
+    difficulty: "Intermediate",
     platforms: ["macOS", "Windows", "Linux"],
     category: "Configuration",
     syntax: "curl -I <url>",
@@ -916,12 +944,14 @@ function normalizeCommand(
 
   const name = readString(value.name, `command-${index + 1}`);
   const slug = createCommandSlug(readString(value.slug, name));
+  const category = readString(value.category, "Connectivity");
 
   return {
     slug,
     name,
     description: readString(value.description, "Network command reference."),
-    category: readString(value.category, "Connectivity"),
+    category,
+    difficulty: readDifficulty(value.difficulty, name, category),
     platforms: readPlatforms(value.platforms),
     syntax: readString(value.syntax, name),
     explanation: readString(
@@ -1034,6 +1064,63 @@ function normalizePlatform(value: unknown) {
   }
 
   return null;
+}
+
+function readDifficulty(
+  value: unknown,
+  commandName: string,
+  category: string
+): CommandDifficulty {
+  const normalized =
+    typeof value === "string" ? value.trim().toLowerCase() : "";
+
+  if (normalized === "beginner") {
+    return "Beginner";
+  }
+
+  if (normalized === "intermediate") {
+    return "Intermediate";
+  }
+
+  if (normalized === "advanced") {
+    return "Advanced";
+  }
+
+  return inferCommandDifficulty(commandName, category);
+}
+
+function inferCommandDifficulty(
+  commandName: string,
+  category: string
+): CommandDifficulty {
+  const normalizedName = commandName.trim().toLowerCase();
+
+  if (
+    normalizedName.includes("sudo") ||
+    normalizedName === "netstat -b" ||
+    normalizedName === "netstat -r" ||
+    normalizedName === "ipconfig /release" ||
+    normalizedName.startsWith("route ")
+  ) {
+    return "Advanced";
+  }
+
+  if (
+    normalizedName.includes("traceroute") ||
+    normalizedName.includes("tracert") ||
+    normalizedName.includes("arp") ||
+    normalizedName.includes("netstat") ||
+    normalizedName.includes("/renew") ||
+    normalizedName.includes("flushdns") ||
+    normalizedName.includes("getpacket") ||
+    normalizedName.includes("networksetup") ||
+    normalizedName.includes("scutil") ||
+    normalizedName.includes("curl")
+  ) {
+    return "Intermediate";
+  }
+
+  return category === "Routing" ? "Intermediate" : "Beginner";
 }
 
 function readStringList(value: unknown, fallback: string[]) {

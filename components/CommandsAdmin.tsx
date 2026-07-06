@@ -25,9 +25,11 @@ import { useEffect, useMemo, useState, type FormEvent } from "react";
 import SiteNav from "@/components/SiteNav";
 import {
   cloneCommandsContent,
+  commandDifficultyOptions,
   commandPlatformOptions,
   commands as defaultCommands,
   createCommandSlug,
+  type CommandDifficulty,
   type CommandExample,
   type CommandPlatform,
   type CommandReference,
@@ -143,6 +145,7 @@ export default function CommandsAdmin({
             command.slug,
             command.description,
             command.category,
+            command.difficulty,
             command.explanation,
             ...command.platforms,
           ]
@@ -292,6 +295,7 @@ export default function CommandsAdmin({
       name: "",
       description: "",
       category: "",
+      difficulty: "Beginner",
       platforms: [],
       syntax: "",
       explanation: "",
@@ -791,11 +795,29 @@ export default function CommandsAdmin({
                       value={selectedCommand.category}
                       onChange={(value) => updateCommandField("category", value)}
                     />
-                    <TextInput
-                      label="Syntax"
-                      value={selectedCommand.syntax}
-                      onChange={(value) => updateCommandField("syntax", value)}
-                    />
+                    <label className="block text-sm font-medium text-slate-300">
+                      Difficulty
+                      <select
+                        value={selectedCommand.difficulty}
+                        onChange={(event) =>
+                          updateSelectedCommand({
+                            difficulty: event.target.value as CommandDifficulty,
+                          })
+                        }
+                        className="mt-2 h-11 w-full rounded-lg border border-slate-800 bg-slate-950 px-3 text-slate-100 outline-none transition focus:border-cyan-500"
+                      >
+                        {commandDifficultyOptions.map((difficulty) => (
+                          <option key={difficulty}>{difficulty}</option>
+                        ))}
+                      </select>
+                    </label>
+                    <div className="lg:col-span-2">
+                      <TextInput
+                        label="Syntax"
+                        value={selectedCommand.syntax}
+                        onChange={(value) => updateCommandField("syntax", value)}
+                      />
+                    </div>
                     <div className="lg:col-span-2">
                       <Textarea
                         label="Short Description"
@@ -1320,7 +1342,7 @@ function getCommandMeta(command: CommandReference) {
   const platforms =
     command.platforms.length > 0 ? command.platforms.join(", ") : "No platforms";
 
-  return `${category} · ${platforms}`;
+  return `${command.difficulty} · ${category} · ${platforms}`;
 }
 
 function createEditableCommandSlug(value: string) {

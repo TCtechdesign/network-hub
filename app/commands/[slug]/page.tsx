@@ -14,6 +14,7 @@ import CopyCommandButton from "@/components/CopyCommandButton";
 import SiteNav from "@/components/SiteNav";
 import {
   commands as defaultCommands,
+  type CommandDifficulty,
   type CommandReference,
   type CommandRelatedLink,
 } from "@/data/commands";
@@ -65,9 +66,12 @@ export default async function CommandDetailPage({
 
           <div className="mt-8 grid gap-6 xl:grid-cols-[minmax(0,1fr)_26rem] xl:gap-8">
             <article className="min-w-0">
-              <p className="text-base font-semibold text-slate-500">
-                {command.category}
-              </p>
+              <div className="flex flex-wrap items-center gap-3">
+                <p className="text-base font-semibold text-slate-500">
+                  {command.category}
+                </p>
+                <DifficultyBadge difficulty={command.difficulty} />
+              </div>
               <h1 className="mt-3 break-words text-4xl font-bold leading-none tracking-tight text-cyan-400 sm:text-5xl">
                 {command.name}
               </h1>
@@ -148,6 +152,46 @@ export default async function CommandDetailPage({
       </section>
     </main>
   );
+}
+
+function DifficultyBadge({ difficulty }: { difficulty: CommandDifficulty }) {
+  return (
+    <span
+      className={`inline-flex items-center gap-2 text-xs font-semibold ${getDifficultyTextClass(
+        difficulty
+      )}`}
+    >
+      <span
+        className={`h-2 w-2 rounded-full ${getDifficultyDotClass(difficulty)}`}
+        aria-hidden="true"
+      />
+      {difficulty}
+    </span>
+  );
+}
+
+function getDifficultyTextClass(difficulty: CommandDifficulty) {
+  if (difficulty === "Beginner") {
+    return "text-emerald-300";
+  }
+
+  if (difficulty === "Intermediate") {
+    return "text-amber-300";
+  }
+
+  return "text-red-300";
+}
+
+function getDifficultyDotClass(difficulty: CommandDifficulty) {
+  if (difficulty === "Beginner") {
+    return "bg-emerald-400";
+  }
+
+  if (difficulty === "Intermediate") {
+    return "bg-amber-300";
+  }
+
+  return "bg-red-400";
 }
 
 function CommandCodeCard({
