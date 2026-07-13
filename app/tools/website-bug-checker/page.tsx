@@ -189,11 +189,7 @@ export default function WebsiteBugCheckerPage() {
 
       setResult(data.result);
     } catch (error) {
-      setError(
-        error instanceof Error
-          ? error.message
-          : "The website could not be checked."
-      );
+      setError(getAnalysisErrorMessage(error));
       setResult(null);
     } finally {
       setIsAnalyzing(false);
@@ -795,6 +791,17 @@ function normalizeWebsiteUrl(value: string) {
   } catch {
     return null;
   }
+}
+
+function getAnalysisErrorMessage(error: unknown) {
+  const message =
+    error instanceof Error ? error.message : "The website could not be checked.";
+
+  if (/aborted|timed out|timeout/i.test(message)) {
+    return "This website URL is invalid or did not respond before the checker timed out. Enter a public website URL and try again.";
+  }
+
+  return message;
 }
 
 function createWebsiteReport(result: WebsiteAuditResult) {

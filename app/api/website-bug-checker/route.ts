@@ -64,7 +64,15 @@ const defaultChecks: AuditSelection = {
   audit: true,
 };
 const fetchTimeoutMs = 9000;
+const fetchTimeoutSeconds = Math.round(fetchTimeoutMs / 1000);
 const maxLinksToCheck = 30;
+
+class WebsiteCheckerError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "WebsiteCheckerError";
+  }
+}
 
 export async function GET(request: NextRequest) {
   const startedAt = Date.now();
@@ -79,6 +87,16 @@ export async function GET(request: NextRequest) {
   }
 
   const resolvedAddresses = await resolveTargetAddresses(target.hostname);
+
+  if (resolvedAddresses.length === 0) {
+    return Response.json(
+      {
+        message:
+          "This is an invalid website URL. Check the spelling or enter a public website URL.",
+      },
+      { status: 502 }
+    );
+  }
 
   if (resolvedAddresses.some((address) => isPrivateAddress(address))) {
     return Response.json(
@@ -127,12 +145,10 @@ export async function GET(request: NextRequest) {
 
     return Response.json({ result });
   } catch (error) {
-    const message =
-      error instanceof Error
-        ? error.message
-        : "The website could not be checked right now.";
-
-    return Response.json({ message }, { status: 502 });
+    return Response.json(
+      { message: getWebsiteCheckErrorMessage(error) },
+      { status: 502 }
+    );
   }
 }
 
@@ -545,9 +561,36 @@ async function fetchWithTimeout(url: string, init: RequestInit) {
       cache: "no-store",
       signal: controller.signal,
     });
+  } catch (error) {
+    if (controller.signal.aborted) {
+      throw new WebsiteCheckerError(
+        `This website URL is invalid or did not respond within ${fetchTimeoutSeconds} seconds. Enter a public website URL and try again.`
+      );
+    }
+
+    throw error;
   } finally {
     clearTimeout(timeout);
   }
+}
+
+function getWebsiteCheckErrorMessage(error: unknown) {
+  if (error instanceof WebsiteCheckerError) {
+    return error.message;
+  }
+
+  if (isAbortError(error)) {
+    return `This website URL is invalid or did not respond within ${fetchTimeoutSeconds} seconds. Enter a public website URL and try again.`;
+  }
+
+  return "This website URL is invalid or could not be reached. Enter a public website URL and try again.";
+}
+
+function isAbortError(error: unknown) {
+  return (
+    error instanceof DOMException &&
+    (error.name === "AbortError" || error.name === "TimeoutError")
+  );
 }
 
 async function resolveTargetAddresses(hostname: string) {
